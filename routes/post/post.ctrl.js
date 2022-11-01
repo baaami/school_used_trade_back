@@ -21,6 +21,8 @@ export const read = async (req, res, next) => {
  */
 export const write = async (req, res, next) => {
   const data = req.body
+
+  data.userid = 'testid'
   try {
     const ret = await Post.create(data)
   } catch (error) {
@@ -37,6 +39,8 @@ export const write = async (req, res, next) => {
 export const update = async (req, res, next) => {
   const postId = req.query.id
   const data = req.body
+
+  data.userid = 'testid'
   try {
     await Post.update(data, {
       where: { id: postId },

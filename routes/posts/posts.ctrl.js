@@ -5,15 +5,9 @@ import { Post } from '../../models'
  * GET /api/posts/list
  */
 export const list = async (req, res, next) => {
-  const user = req.user
   let posts
   try {
-    posts = await Post.findAll({
-      attributes: ['userid'],
-      where: {
-        userid: user.id,
-      },
-    })
+    posts = await Post.findAll({})
   } catch (err) {
     console.error(err)
     res.status(505)
