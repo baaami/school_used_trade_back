@@ -5,6 +5,6 @@ var router = express.Router()
 var posts = require('./posts.ctrl')
 
 /* GET posts page. */
-router.post('/', posts.list)
+router.get('/list', posts.list)
 
 module.exports = router
