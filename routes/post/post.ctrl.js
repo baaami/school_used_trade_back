@@ -44,7 +44,7 @@ export const read = async (req, res, next) => {
  */
 export const write = async (req, res, next) => {
   const data = req.body
-  const address = "http://" + ip.address() + ":" + process.env.PORT
+  const address = ip.address() + ":" + process.env.PORT
   // slice "public/"
   const imagePath = path.join(address, req.file.path.slice(7,))
   let resPost
