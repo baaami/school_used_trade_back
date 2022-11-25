@@ -9,6 +9,10 @@ export const kakao = async (req, res, next) => {
   console.log('accessToken : ', accessToken)
   console.log('headers : ', req.headers)
 
+  if(accessToken == undefined) {
+    res.send(505)
+  }
+
   // 유저 데이터 요청
   try {
     payload = await axios({
