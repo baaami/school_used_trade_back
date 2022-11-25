@@ -8,7 +8,6 @@ export const kakao = async (req, res, next) => {
   let payload, user
   console.log('accessToken : ', accessToken)
   console.log('headers : ', req.headers)
-  console.log('body : ', req.body)
 
   // 유저 데이터 요청
   try {
