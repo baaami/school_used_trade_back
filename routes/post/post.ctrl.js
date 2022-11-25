@@ -79,6 +79,7 @@ export const update = async (req, res, next) => {
   const postId = req.query.id
   const data = req.body
   const address = ip.address() + ":" + process.env.PORT
+  const imagePath = path.join(address, req.file.path.slice(7,))
 
   try {
     await Post.update(data, {
@@ -91,7 +92,7 @@ export const update = async (req, res, next) => {
 
   const imageData = {
     postid: postId,
-    path: address,
+    path: imagePath,
   }
 
   // TODO : image가 업데이트될 경우 이전 image는 system에서 삭제 필요
