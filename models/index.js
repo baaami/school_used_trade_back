@@ -24,5 +24,8 @@ db.Sequelize = Sequelize
 
 db.Post = require('./post')(sequelize, Sequelize)
 db.User = require('./user')(sequelize, Sequelize)
+db.Image = require('./image')(sequelize, Sequelize)
+
+db.Post.hasOne(db.Image, { foreignKey: 'postid', sourceKey: 'id' })
 
 module.exports = db

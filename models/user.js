@@ -17,7 +17,7 @@ export default module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'users',
+      tableName: 'user',
       timestamps: false,
     }
   )

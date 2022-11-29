@@ -1,5 +1,9 @@
 // Sequelize
 const { Post } = require('../../models')
+const { Image } = require('../../models')
+const path = require('path');
+const ip = require('ip');
+var fs = require('fs') //fs 모듈을 사용하겠다.
 
 /**
  * post 조회
@@ -7,12 +11,31 @@ const { Post } = require('../../models')
  */
 export const read = async (req, res, next) => {
   const postId = req.query.id
+  var postRaw
 
-  var post = await Post.findOne({
-    where: { id: postId },
-  })
+  try {
+    postRaw = await Post.findOne({
+      where: {
+        'id': postId
+      },    
+      include: [
+        {
+          model: Image,
+          // foreignKey: 'postid',
+          attributes: ['path'],
+        },
+      ],
+    })
+  } catch (err) {
+    console.error(err)
+  }
 
-  res.json(post)
+  if(postRaw === undefined) {
+    res.send(505)
+  } else {
+    const postJson = postRaw.toJSON()
+    res.json(postJson)
+  }
 }
 
 /**
@@ -21,15 +44,31 @@ export const read = async (req, res, next) => {
  */
 export const write = async (req, res, next) => {
   const data = req.body
+  const address = ip.address() + ":" + process.env.PORT
+  // slice "public/"
+  const imagePath = path.join(address, req.file.path.slice(7,))
+  let resPost
 
-  data.userid = 'testid'
   try {
-    const ret = await Post.create(data)
+    resPost = await Post.create(data)
   } catch (error) {
     console.error(error)
     res.send(505)
   }
-  res.json(data)
+
+  const imageData = {
+    postid: resPost.dataValues.id,
+    path: imagePath,
+  }
+
+  try {
+    await Image.create(imageData)
+  } catch (error) {
+    console.error(error)
+    res.send(505)
+  }
+
+  res.send(204)
 }
 
 /**
@@ -39,8 +78,9 @@ export const write = async (req, res, next) => {
 export const update = async (req, res, next) => {
   const postId = req.query.id
   const data = req.body
+  const address = ip.address() + ":" + process.env.PORT
+  const imagePath = path.join(address, req.file.path.slice(7,))
 
-  data.userid = 'testid'
   try {
     await Post.update(data, {
       where: { id: postId },
@@ -49,6 +89,22 @@ export const update = async (req, res, next) => {
     console.error(error)
     res.send(505)
   }
+
+  const imageData = {
+    postid: postId,
+    path: imagePath,
+  }
+
+  // TODO : image가 업데이트될 경우 이전 image는 system에서 삭제 필요
+  try {
+    await Image.update(imageData, {
+      where: { postid: postId },
+    })
+  } catch (error) {
+    console.error(error)
+    res.send(505)
+  }
+
   res.send(201)
 }
 
@@ -66,5 +122,13 @@ export const remove = async (req, res, next) => {
     console.error(error)
     res.send(505)
   }
-  res.send(201)
+  try {
+    await Image.destroy({
+      where: { postid: postId },
+    })
+  } catch (error) {
+    console.error(error)
+    res.send(505)
+  }
+  res.send(204)
 }
