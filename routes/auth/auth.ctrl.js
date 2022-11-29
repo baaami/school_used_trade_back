@@ -27,6 +27,7 @@ export const kakao = async (req, res, next) => {
   } catch (err) {
     console.log(err.response)
     res.send(505)
+    return
   }
 
   const { access_token } = TokenFromkakao.data
