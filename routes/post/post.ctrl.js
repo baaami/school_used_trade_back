@@ -79,7 +79,11 @@ export const update = async (req, res, next) => {
   const postId = req.query.id
   const data = req.body
   const address = '127.0.0.1'+ ':' + process.env.PORT
-  const imagePath = path.join(address, req.file.path.slice(7))
+  let imagePath = null
+  if(req.file !== undefined) {
+    // iamge 파일을 수정하지 않은 경우
+    imagePath = path.join(address, req.file.path.slice(7))
+  }
 
   try {
     await Post.update(data, {
@@ -90,19 +94,21 @@ export const update = async (req, res, next) => {
     res.send(505)
   }
 
-  const imageData = {
-    postid: postId,
-    path: imagePath,
-  }
-
-  // TODO : image가 업데이트될 경우 이전 image는 system에서 삭제 필요
-  try {
-    await Image.update(imageData, {
-      where: { postid: postId },
-    })
-  } catch (error) {
-    console.error(error)
-    res.send(505)
+  if(imagePath) {
+    const imageData = {
+      postid: postId,
+      path: imagePath,
+    }
+  
+    // TODO : image가 업데이트될 경우 이전 image는 system에서 삭제 필요
+    try {
+      await Image.update(imageData, {
+        where: { postid: postId },
+      })
+    } catch (error) {
+      console.error(error)
+      res.send(505)
+    }
   }
 
   res.send(201)
