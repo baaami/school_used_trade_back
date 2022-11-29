@@ -3,19 +3,36 @@ const jwt = require('../../lib/jwt')
 import { User } from '../../models'
 
 export const kakao = async (req, res, next) => {
-  const accessToken = req.headers['access-token']
+  // 인가 코드 획득
+  const { code } = req.body
+  console.log('[TEST] permission code: ', code)
+  let TokenFromkakao, UserFromkakao
 
-  let payload, user
-  console.log('accessToken : ', accessToken)
-  console.log('headers : ', req.headers)
-
-  if(accessToken == undefined) {
-    res.send(505)
+  // access 토큰 요청
+  try {
+    TokenFromkakao = await axios({
+      method: 'POST',
+      url: 'https://kauth.kakao.com/oauth/token',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      data: qs.stringify({
+        grant_type: 'authorization_code',
+        client_id: process.env.KAKAO_ID,
+        redirect_uri: process.env.KAKAO_CALLBACK_URL,
+        code: code,
+      }),
+    })
+  } catch (err) {
+    console.log(err.response)
   }
+
+  const { access_token } = TokenFromkakao.data
+  console.log('access_token: ', access_token)
 
   // 유저 데이터 요청
   try {
-    payload = await axios({
+    UserFromkakao = await axios({
       method: 'get',
       url: 'https://kapi.kakao.com/v2/user/me',
       headers: {
@@ -23,15 +40,16 @@ export const kakao = async (req, res, next) => {
       },
     })
   } catch (err) {
-    console.error('kakao login error : ', err)
+    console.log('kakao login error : ', err)
     res.send(505)
   }
 
-  if (payload.status != 200) {
-    console.error('Unknown error')
+  let user
+  if (UserFromkakao.status != 200) {
+    console.log('Unknown error')
     res.send(505)
   } else {
-    user = payload.data
+    user = UserFromkakao.data
   }
 
   const dbdata = {
@@ -53,6 +71,7 @@ export const kakao = async (req, res, next) => {
   const jwtToken = await jwt.sign(user)
   const result = {
     token: jwtToken.token,
+    user: user,
   }
 
   res.json(result)
