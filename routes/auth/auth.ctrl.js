@@ -34,7 +34,7 @@ export const kakao = async (req, res, next) => {
   // 유저 데이터 요청
   try {
     UserFromkakao = await axios({
-      method: 'get',
+      method: 'post',
       url: 'https://kapi.kakao.com/v2/user/me',
       headers: {
         Authorization: `Bearer ${access_token}`,
