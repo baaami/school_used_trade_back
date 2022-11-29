@@ -1,8 +1,8 @@
 // Sequelize
 const { Post } = require('../../models')
 const { Image } = require('../../models')
-const path = require('path');
-const ip = require('ip');
+const path = require('path')
+const ip = require('ip')
 var fs = require('fs') //fs 모듈을 사용하겠다.
 
 /**
@@ -16,8 +16,8 @@ export const read = async (req, res, next) => {
   try {
     postRaw = await Post.findOne({
       where: {
-        'id': postId
-      },    
+        id: postId,
+      },
       include: [
         {
           model: Image,
@@ -30,7 +30,7 @@ export const read = async (req, res, next) => {
     console.error(err)
   }
 
-  if(postRaw === undefined) {
+  if (postRaw === undefined) {
     res.send(505)
   } else {
     const postJson = postRaw.toJSON()
@@ -44,9 +44,9 @@ export const read = async (req, res, next) => {
  */
 export const write = async (req, res, next) => {
   const data = req.body
-  const address = ip.address() + ":" + process.env.PORT
+  const address = ip.address() + ':' + process.env.PORT
   // slice "public/"
-  const imagePath = path.join(address, req.file.path.slice(7,))
+  const imagePath = path.join(address, req.file.path.slice(7))
   let resPost
 
   try {
@@ -78,8 +78,8 @@ export const write = async (req, res, next) => {
 export const update = async (req, res, next) => {
   const postId = req.query.id
   const data = req.body
-  const address = ip.address() + ":" + process.env.PORT
-  const imagePath = path.join(address, req.file.path.slice(7,))
+  const address = ip.address() + ':' + process.env.PORT
+  const imagePath = path.join(address, req.file.path.slice(7))
 
   try {
     await Post.update(data, {

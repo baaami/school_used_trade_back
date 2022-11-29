@@ -1,5 +1,6 @@
 const axios = require('axios')
 const jwt = require('../../lib/jwt')
+import qs from 'querystring'
 import { User } from '../../models'
 
 export const kakao = async (req, res, next) => {
@@ -25,10 +26,10 @@ export const kakao = async (req, res, next) => {
     })
   } catch (err) {
     console.log(err.response)
+    res.send(505)
   }
 
   const { access_token } = TokenFromkakao.data
-  console.log('access_token: ', access_token)
 
   // 유저 데이터 요청
   try {
@@ -36,7 +37,7 @@ export const kakao = async (req, res, next) => {
       method: 'get',
       url: 'https://kapi.kakao.com/v2/user/me',
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${access_token}`,
       },
     })
   } catch (err) {
