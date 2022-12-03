@@ -78,3 +78,31 @@ export const kakao = async (req, res, next) => {
 
   res.json(result)
 }
+
+
+export const logout = async (req, res, next) => {
+  const authorization = req.headers['authorization']
+  if (authorization === undefined) {
+    // invalid header
+    res.send(404)
+  }
+  const access_token = authorization.replace('Bearer', '').trim()
+
+  // 유저 로그아웃
+  try {
+    LogoutFromkakao = await axios({
+      method: 'post',
+      url: 'https://kapi.kakao.com/v1/user/logout',
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+
+    console.log("LogoutFromkakao: ", LogoutFromkakao);
+  } catch (err) {
+    console.log('kakao login error : ', err)
+    res.send(505)
+  }
+  
+  res.send(204);
+}
