@@ -10,6 +10,10 @@ export default module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(500),
         allowNull: true,
       },
+      price: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },      
       userid: {
         type: DataTypes.STRING(50),
         allowNull: true,
