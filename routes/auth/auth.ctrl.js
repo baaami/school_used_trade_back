@@ -79,7 +79,7 @@ export const kakao = async (req, res, next) => {
   const jwtToken = await jwt.sign(user)
   const result = {
     token: jwtToken.token,
-    user: ExistUser.toJSON(),
+    user: ExistUser,
   }
 
   res.json(result)
