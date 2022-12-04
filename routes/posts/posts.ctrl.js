@@ -9,7 +9,7 @@ export const list = async (req, res, next) => {
   let postListRaw
   try {
     postListRaw = await Post.findAll({
-      attributes: ['id','title','body','userid','created_at'],
+      attributes: ['id','title','body','price','userid','created_at'],
       include: [
         {
           model: Image,
