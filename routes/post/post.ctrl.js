@@ -47,8 +47,6 @@ export const write = async (req, res, next) => {
   data.userid = req.user.id
 
   const address = '127.0.0.1'+ ':' + process.env.PORT
-  // slice "public/"
-  const imagePath = path.join(address, req.file.path.slice(7))
   let resPost
 
   try {
@@ -58,17 +56,24 @@ export const write = async (req, res, next) => {
     res.send(505)
   }
 
-  const imageData = {
-    postid: resPost.dataValues.id,
-    path: imagePath,
-  }
-
-  try {
-    await Image.create(imageData)
-  } catch (error) {
-    console.error(error)
-    res.send(505)
-  }
+  // slice "public/"
+  let imagePath;
+  if(req.file !== undefined) {
+    // iamge 파일을 수정하지 않은 경우
+    imagePath = path.join(address, req.file.path.slice(7))
+    
+    const imageData = {
+      postid: resPost.dataValues.id,
+      path: imagePath,
+    }
+  
+    try {
+      await Image.create(imageData)
+    } catch (error) {
+      console.error(error)
+      res.send(505)
+    }
+  }  
 
   res.send(204)
 }
