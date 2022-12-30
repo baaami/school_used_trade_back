@@ -35,10 +35,13 @@ export const kakao = async (req, res, next) => {
   // 유저 데이터 요청
   try {
     UserFromkakao = await axios({
-      method: 'post',
+      method: 'get',
       url: 'https://kapi.kakao.com/v2/user/me',
       headers: {
         Authorization: `Bearer ${access_token}`,
+      },
+      params: {
+        property_keys: ["kakao_account.profile"],
       },
     })
   } catch (err) {
@@ -52,6 +55,7 @@ export const kakao = async (req, res, next) => {
     res.send(505)
   } else {
     user = UserFromkakao.data
+    console.log("User : ", user)
   }
 
   const dbdata = {
